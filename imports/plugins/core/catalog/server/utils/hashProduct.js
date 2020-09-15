@@ -24,7 +24,8 @@ const productFieldsThatNeedPublishing = [
   "title",
   "twitterMsg",
   "type",
-  "vendor"
+  "vendor",
+  "selectors"
 ];
 
 const variantFieldsThatNeedPublishing = [

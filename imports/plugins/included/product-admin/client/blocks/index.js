@@ -7,6 +7,7 @@ import ProductMetadataForm from "./ProductMetadataForm";
 import ProductSocialForm from "./ProductSocialForm";
 import ProductTagForm from "./ProductTagForm";
 import ProductMediaForm from "./ProductMediaForm";
+import ProductSelectorForm from "./ProductSelectorForm";
 import VariantHeader from "./VariantHeader";
 import VariantList from "./VariantList";
 import VariantDetailForm from "./VariantDetailForm";
@@ -75,6 +76,13 @@ registerBlock({
   name: "ProductMetadataForm",
   component: ProductMetadataForm,
   priority: 60
+});
+
+registerBlock({
+  region: "ProductDetailMain",
+  name: "ProductSelectorForm",
+  component: ProductSelectorForm,
+  priority: 61
 });
 
 registerBlock({

@@ -13,6 +13,10 @@ export default gql`
       key
       value
     }
+    selectors {
+      selectorName
+      selectorOptionsAsCSV
+    }
     media {
       _id
       URLs {

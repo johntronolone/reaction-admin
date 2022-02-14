@@ -1,3 +1,12 @@
+# [4.0.0-beta.17](https://github.com/reactioncommerce/reaction-admin/compare/v4.0.0-beta.16...v4.0.0-beta.17) (2022-02-14)
+
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([1382200](https://github.com/reactioncommerce/reaction-admin/commit/1382200bcb4e38964217f0f05c56fed68089bbce))
+* upgrade i18next-fetch-backend from 2.2.0 to 2.3.1 ([3a14a8f](https://github.com/reactioncommerce/reaction-admin/commit/3a14a8f7e489cf1cf4e81b2ddc7f601d62b10e8f))
+* upgrade mongodb from 3.7.1 to 3.7.3 ([0b72207](https://github.com/reactioncommerce/reaction-admin/commit/0b72207b0e4e1f74582865825dd26f3b3392b8da))
+
 # [4.0.0-beta.16](https://github.com/reactioncommerce/reaction-admin/compare/v4.0.0-beta.15...v4.0.0-beta.16) (2022-02-14)
 
 

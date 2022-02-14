@@ -66,7 +66,7 @@
     "url": "https://github.com/reactioncommerce/reaction-admin/issues"
   },
   "dependencies": {
-    "@accounts/apollo-link": "^0.31.1",
+    "@accounts/apollo-link": "^0.32.1",
     "@accounts/client": "^0.33.0",
     "@accounts/client-password": "^0.32.1",
     "@accounts/graphql-client": "^0.33.0",

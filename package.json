@@ -119,7 +119,7 @@
     "immutability-helper": "^2.9.1",
     "immutable": "^3.8.2",
     "jquery-i18next": "1.2.1",
-    "libphonenumber-js": "1.9.34",
+    "libphonenumber-js": "1.9.41",
     "lodash": "^4.17.21",
     "match-sorter": "^2.3.0",
     "mdi-material-ui": "^6.2.0",

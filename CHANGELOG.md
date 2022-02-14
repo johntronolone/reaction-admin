@@ -1,3 +1,12 @@
+# [4.0.0-beta.16](https://github.com/reactioncommerce/reaction-admin/compare/v4.0.0-beta.15...v4.0.0-beta.16) (2022-02-14)
+
+
+### Bug Fixes
+
+* upgrade @accounts/apollo-link from 0.31.1 to 0.32.1 ([4a7a5fe](https://github.com/reactioncommerce/reaction-admin/commit/4a7a5feac86136b2a089edd3cdf22e143fe33078))
+* upgrade @wojtekmaj/enzyme-adapter-react-17 from 0.6.3 to 0.6.5 ([7f06eea](https://github.com/reactioncommerce/reaction-admin/commit/7f06eea6962c1fefd2d4e7b41d06359c61ed5333))
+* upgrade libphonenumber-js from 1.9.34 to 1.9.41 ([5035244](https://github.com/reactioncommerce/reaction-admin/commit/5035244bf18195ba016d9817e2fcc1f1a6d3f7c2))
+
 # [4.0.0-beta.15](https://github.com/reactioncommerce/reaction-admin/compare/v4.0.0-beta.14...v4.0.0-beta.15) (2021-12-13)
 
 

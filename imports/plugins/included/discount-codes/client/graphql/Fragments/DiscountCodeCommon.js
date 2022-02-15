@@ -12,6 +12,7 @@ export default gql`
       enabled
       accountLimit
       redemptionLimit
+      products
     }
     description
     discountMethod

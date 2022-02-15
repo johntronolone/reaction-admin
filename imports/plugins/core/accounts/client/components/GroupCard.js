@@ -51,6 +51,7 @@ function GroupCard({ group, groups, isLoadingGroups, refetchGroups, shopId }) {
               group={group}
               groups={groups}
               isLoadingGroups={isLoadingGroups}
+              key={group._id}
             />
           </CardContent>
         </Collapse>

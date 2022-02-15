@@ -66,6 +66,7 @@ function ProductsTable() {
   const [pageCount, setPageCount] = useState(1);
   const [selectedRows, setSelectedRows] = useState([]);
   const [tableData, setTableData] = useState([]);
+  console.log({tableData});
 
   // Filter by file state
   const [files, setFiles] = useState([]);
@@ -177,6 +178,10 @@ function ProductsTable() {
     onRowSelect,
     getRowId: (row) => row._id
   });
+  
+  // page.values has the correct id format...  
+  console.log({dataTableProps});
+
 
   const { refetch, setManualFilters } = dataTableProps;
 

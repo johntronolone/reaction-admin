@@ -12,6 +12,7 @@ import { useApolloClient } from "@apollo/react-hooks";
 import useCurrentShopId from "/imports/client/ui/hooks/useCurrentShopId";
 import discountCodesQuery from "../graphql/queries/discountCodes";
 import DiscountCodeForm from "./DiscountCodeForm";
+import productsQuery from "../../../product-admin/client/graphql/queries/products";
 
 const useStyles = makeStyles({
   card: {
@@ -30,9 +31,12 @@ function DiscountCodesTable() {
   const [pageCount, setPageCount] = useState(1);
   const [tableData, setTableData] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isInitLoad, setIsInitLoad] = useState(true);
   const [selectedDiscountCode, setSelectedDiscountCode] = useState(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [shopId] = useCurrentShopId();
+  const [testData, setTestData] = useState([]);
+  const [productsData, setProductsData] = useState([]);
 
   // Create and memoize the column data
   const columns = useMemo(
@@ -61,6 +65,64 @@ function DiscountCodesTable() {
     []
   );
 
+  async function getProductIds() { 
+    
+    if (!shopId) {
+      return;
+    }
+    
+    const { data } = await apolloClient.query({
+      query: productsQuery,
+      variables: {
+        shopIds: [shopId],
+        first: Number.MAX_SAFE_INTEGER 
+      },
+      fetchPolicy: "network-only"
+    });
+    
+    if(data.products.nodes) {
+      //setProductsData(data.products.nodes);
+
+      let newState = [];
+      data.products.nodes.map((product) => {
+        newState.push({'id': product._id, 'active': true});
+      });
+      //console.log({newState}); 
+      setProductsData([...newState]);
+
+      /*const initConditions = getInputProps("conditions", muiOptions);
+      
+      let initItems = [];
+      
+      if (initConditions.value.products) {
+        initItems = initConditions.value.products;
+      }
+      console.log({initItems});
+
+      //TODO: REMOVE THIS TEST:
+      if (Array.isArray(tableData)) {
+        if (tableData[0]) {
+          initItems.push(tableData[0]._id);
+        }
+      }
+      console.log({initItems});
+
+
+      let stateItems = [];
+      tableData.map((tableDatum, idx) => {
+        if (Array.isArray(initItems) && initItems.includes(tableDatum._id)) {
+          stateItems.push({active: true});
+        } else {
+          stateItems.push({active: false});
+        }
+      });
+      setConditionsItems(stateItems);*/
+    }
+  }
+
+  //getProductIds();
+
+
   const onFetchData = useCallback(
     async ({ globalFilter, pageIndex, pageSize }) => {
       // Wait for shop id to be available before fetching orders.
@@ -77,11 +139,14 @@ function DiscountCodesTable() {
           offset: pageIndex * pageSize,
           filters: {
             searchField: globalFilter
-          }
+          },
+          firstProducts: Number.MAX_SAFE_INTEGER
         },
         fetchPolicy: "network-only"
-      });
+      }); 
 
+      //console.log({data});
+      
       if (error && error.length) {
         enqueueSnackbar(i18next.t("admin.table.error", { variant: "error" }));
         return;
@@ -90,6 +155,28 @@ function DiscountCodesTable() {
       // Update the state with the fetched data as an array of objects and the calculated page count
       setTableData(data.discountCodes.nodes);
       setPageCount(Math.ceil(data.discountCodes.totalCount / pageSize));
+      
+      /*data = await apolloClient.query({
+        query: productsQuery,
+        variables: {
+          shopIds: [shopId],
+          first: Number.MAX_SAFE_INTEGER 
+        },
+        fetchPolicy: "network-only"
+      });*/
+
+      let initState = [];
+      
+      if(data.products.nodes) {
+        data.products.nodes.map((product) => {
+          initState.push({'id': product._id, 'title': product.title, 'active': false});
+        });
+      }
+      
+      //console.log({initState}); 
+      setProductsData(initState);
+
+      setIsInitLoad(true);
 
       setIsLoading(false);
     },
@@ -98,6 +185,7 @@ function DiscountCodesTable() {
 
   const openDialog = () => {
     setIsDialogOpen(true);
+    setIsInitLoad(true);
   };
 
   const onCreateDiscountCode = () => {
@@ -108,6 +196,8 @@ function DiscountCodesTable() {
 
   const handleOnCloseDialog = () => {
     setIsDialogOpen(false);
+    setIsInitLoad(false);
+    setSelectedDiscountCode(null);
   };
 
   // Row click callback
@@ -158,6 +248,9 @@ function DiscountCodesTable() {
         onCloseDialog={handleOnCloseDialog}
         shopId={shopId}
         refetch={refetch}
+        productsData={productsData}
+        isInitLoad={isInitLoad}
+        setIsInitLoad={setIsInitLoad}
       />
     </>
   );

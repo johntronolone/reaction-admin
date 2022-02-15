@@ -17,6 +17,10 @@ export default gql`
       selectorName
       selectorOptionsAsCSV
     }
+    shippingOverride {
+      state
+      surcharge
+    }
     media {
       _id
       URLs {

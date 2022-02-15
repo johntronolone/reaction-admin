@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import i18next from "i18next";
-import { useMutation } from "@apollo/react-hooks";
+import { useApolloClient, useMutation } from "@apollo/react-hooks";
 import { useSnackbar } from "notistack";
 import SimpleSchema from "simpl-schema";
 import _ from "lodash";
@@ -14,7 +14,11 @@ import {
   DialogTitle,
   Grid,
   makeStyles,
-  MenuItem
+  MenuItem,
+  Checkbox,
+  Typography,
+  FormGroup,
+  FormControlLabel
 } from "@material-ui/core";
 import muiOptions from "reacto-form/cjs/muiOptions";
 import useReactoForm from "reacto-form/cjs/useReactoForm";
@@ -60,6 +64,14 @@ const discountCodeSchema = new SimpleSchema({
     type: Number,
     optional: true
   },
+  "conditions.products": {
+    type: Array,
+    optional: true
+  },
+  "conditions.products.$": {
+    type: String,
+    optional: true
+  },
   "description": {
     type: String,
     optional: true
@@ -82,9 +94,17 @@ const validator = discountCodeSchema.getFormValidator();
  */
 export default function DiscountCodeForm(props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  //const [hasChanges, setHasChanges] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  
+  const apolloClient = useApolloClient();
 
-  const { discountCode, isCreateMode, isOpen, onCloseDialog, refetch, shopId } = props;
+  //const [onceThru, setOnceThru] = useState(false);
+
+  const { discountCode, isCreateMode, isOpen, onCloseDialog, refetch, shopId, productsData, isInitLoad, setIsInitLoad } = props;
+
+  //console.log({productsData});
+
   const calculationMethods = [
     { label: "Credit", value: "credit" },
     { label: "Discount", value: "discount" },
@@ -145,7 +165,25 @@ export default function DiscountCodeForm(props) {
     submitForm
   } = useReactoForm({
     async onSubmit(formData) {
-      setIsSubmitting(true);
+      setIsSubmitting(true);  
+      
+      let activeIds = [];
+      /*for (const condition in conditionsState) {
+        console.log({condition});
+        if (condition.active) {
+          activeIds.push(condition.id);
+        }
+      }*/
+      conditionsState.map((condition) => {
+        if (condition.active) {
+          activeIds.push(condition.id);
+        }
+      });
+      //console.log(conditionsState.find(i => i.active === true));
+      //console.log({activeIds});
+  
+      //console.log({formData});
+      
 
       if (discountCode) {
         const discountCodeInput = discountCodeSchema.clean(formData);
@@ -153,6 +191,11 @@ export default function DiscountCodeForm(props) {
           // Set order minimum to 0, this will allow a discount to be
           // Redeemed infinitely on any number of orders.
           _.set(discountCodeInput, "conditions.order.min", 0);
+        }
+        if (activeIds.length) {
+          _.set(discountCodeInput, "conditions.products", activeIds);
+        } else {
+          _.set(discountCodeInput, "conditions.products", []);
         }
         await updateDiscountCode({
           variables: {
@@ -170,6 +213,11 @@ export default function DiscountCodeForm(props) {
           // Set order minimum to 0, this will allow a discount to be
           // Redeemed infinitely on any number of orders.
           _.set(discountCodeInput, "conditions.order.min", 0);
+        } // TODO: add set activeIds
+        if (activeIds.length) {
+          _.set(discountCodeInput, "conditions.products", activeIds);
+        } else {
+          _.set(discountCodeInput, "conditions.products", []);
         }
 
         await createDiscountCode({
@@ -213,6 +261,117 @@ export default function DiscountCodeForm(props) {
     );
   }
 
+
+  
+
+  //console.log({productsData});
+
+  let initConditions = JSON.parse(JSON.stringify(productsData));
+  const [conditionsState, setConditionsState] = useState(initConditions);
+
+  useEffect(() => {
+    let initConditions = JSON.parse(JSON.stringify(productsData));
+    setConditionsState(initConditions);
+  }, [productsData]);
+
+  useEffect(() => {
+    //console.log('component did mount');
+    //console.log(isInitLoad);
+    
+    const inputConditions = getInputProps("conditions", muiOptions);
+    //console.log({inputConditions});
+    
+    if (inputConditions.value.products && isInitLoad) {
+      
+      //console.log('first render');
+      //if (conditionsState.length) {
+      //console.log(inputConditions.value.products); //.length);
+      if (inputConditions.value.products && inputConditions.value.products.length) {
+        /*let stateToUpdate = [...conditionsState];
+        let objToUpdate = stateToUpdate.find(i => i.title == 'DIN Cable');
+        if (objToUpdate.active = false) {
+          objToUpdate.active = !objToUpdate.active;
+          setConditionsState(stateToUpdate);
+        }*/
+        //TODO: loop thru inputConditions.value.products and set active states on initConditions
+        let initConditions = JSON.parse(JSON.stringify(productsData));
+        inputConditions.value.products.map((id) => {
+          objToActivate = initConditions.find(i => i.id == id);
+          if (objToActivate) {
+            objToActivate.active = true;   
+          } else {
+            console.log('id not found: ' + id);
+          }
+        });
+        setConditionsState(initConditions);
+      } else {
+        let initConditions = JSON.parse(JSON.stringify(productsData));
+        setConditionsState(initConditions);
+      }
+      setIsInitLoad(false);
+    } 
+  });
+
+
+  const handleCheckboxSelect = (event) => {
+    ////console.log(event.target.name);
+    //console.log(conditionsState.find(i => i.id === event.target.name));
+    let stateToUpdate = [...conditionsState];
+    let objToUpdate = stateToUpdate.find(i => i.id === event.target.name);
+    objToUpdate.active = !objToUpdate.active;
+    setConditionsState(stateToUpdate);
+    /*setConditionsState({
+      ...conditionsState,
+      {'id': event.target.name , 'active': event.target.checked }
+    });*/
+    //console.log(conditionsState);
+    //console.log({productsData});
+    /*if (conditionsState == JSON.parse(JSON.stringify(productsData))) {
+      setHasChanges(false);
+    } else {
+      setHasChanges(true);
+    }*/
+  };
+
+
+
+  let discountConditionsItemsField;
+
+  if (Array.isArray(productsData)) {
+    const items = [...productsData];
+    //console.log(...getInputProps("conditions.redemptionLimit", muiOptions));
+    if (productsData && Array.isArray(productsData) && productsData[0] && Array.isArray(conditionsState) && conditionsState[0]) {
+      discountConditionsItemsField = (
+        <FormGroup>
+        {items.map((item, idx) => {
+          return ( 
+            <FormControlLabel
+              key={idx}
+              control={<Checkbox 
+                checked={conditionsState.find(i => i.id === item.id).active}
+                onChange={handleCheckboxSelect}
+                name={item.id}
+              />}
+              label={item.title}
+            />
+          );
+        })}
+        </FormGroup>
+      ); 
+    }
+  }
+  
+
+  /*const onCloseHijack = () => {
+    console.log('on close hijack');
+    console.log({conditionsState});
+    console.log({productsData});
+    let initConditions = JSON.parse(JSON.stringify(productsData));
+    setConditionsState(initConditions);
+    console.log({conditionsState});
+    onCloseDialog();
+  };*/
+    
   const classes = useStyles();
 
   return (
@@ -276,6 +435,9 @@ export default function DiscountCodeForm(props) {
                 {...getInputProps("conditions.redemptionLimit", muiOptions)}
               />
             </Grid>
+            <Grid item xs={12}>
+              {discountConditionsItemsField}
+            </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
@@ -312,7 +474,7 @@ export default function DiscountCodeForm(props) {
             {i18next.t("app.cancel")}
           </Button>
           <Button
-            disabled={isSubmitting || !isDirty}
+            disabled={isSubmitting}
             onClick={submitForm}
             variant="contained"
             color="primary"

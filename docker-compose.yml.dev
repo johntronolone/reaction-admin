@@ -13,16 +13,16 @@ networks:
 
 services:
   reaction-admin:
-    #image: reactioncommerce/admin:3.0.0-beta.7
-    image: reactioncommerce/admin:local-prod
+    #image: reactioncommerce/admin:3.0.0-beta.6
+    image: reactioncommerce/admin:local-dev
     build:
       context: .
-      dockerfile: Dockerfile-prod
+      dockerfile: Dockerfile-dev
     command: bash -c "export PATH=$PATH:/home/node/.meteor && npm install --no-audit && node ./.reaction/waitForMongo.js && node --experimental-modules ./.reaction/scripts/run.mjs"
     volumes:
       - .:/usr/local/src/app:cached
       - reaction_meteor_local:/usr/local/src/app/.meteor/local
-      - reaction_node_modules:/usr/local/src/app/node_modules
+      - reaction_node_modules:/usr/local/src/app/node_modules 
     env_file:
       - ./.env
     networks:

@@ -164,6 +164,8 @@ class OrderCardFulfillmentGroups extends Component {
     const { fulfillmentGroups } = order;
     const totalGroupsCount = fulfillmentGroups.length;
 
+    console.log({order});
+
     return fulfillmentGroups.map((fulfillmentGroup, index) => {
       const currentGroupCount = index + 1;
       const { data: { shippingAddress }, displayStatus, status } = fulfillmentGroup;

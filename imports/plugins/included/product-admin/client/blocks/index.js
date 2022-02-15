@@ -8,6 +8,7 @@ import ProductSocialForm from "./ProductSocialForm";
 import ProductTagForm from "./ProductTagForm";
 import ProductMediaForm from "./ProductMediaForm";
 import ProductSelectorForm from "./ProductSelectorForm";
+import ProductShippingOverrideForm from "./ProductShippingOverrideForm";
 import VariantHeader from "./VariantHeader";
 import VariantList from "./VariantList";
 import VariantDetailForm from "./VariantDetailForm";
@@ -83,6 +84,13 @@ registerBlock({
   name: "ProductSelectorForm",
   component: ProductSelectorForm,
   priority: 61
+});
+
+registerBlock({
+  region: "ProductDetailMain",
+  name: "ProductShippingOverrideForm",
+  component: ProductShippingOverrideForm,
+  priority: 62
 });
 
 registerBlock({
